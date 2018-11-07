@@ -9,7 +9,7 @@ const THEMOVIEDB_API_PATH = "https://api.themoviedb.org/3";
 
 const typeDefs = String.raw`
   type Query {
-    movies(query: String!): [Movie]
+    movies(query: String!, page: Int): [Movie]
     movie(id: Int!): Movie
   }
   type Movie {
@@ -24,10 +24,11 @@ const typeDefs = String.raw`
 const resolvers = {
   Query: {
     movies: (root, args, context) => {
+      const page = args.page || 1;
       return fetch(
         `${THEMOVIEDB_API_PATH}/search/movie?api_key=${
           context.secrets.THEMOVIEDB_API_KEY
-          }&query=${args.query}&language=en-US`
+          }&query=${args.query}&language=en-US&page=${page}`
       )
         .then(res => res.json())
         .then(({ results }) => results);
